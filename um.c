@@ -41,6 +41,7 @@ void build_and_execute_um(FILE* program){
         UM_Word instruction = *(UM_Word*)UArray_at(programCounter, i);
         Instruction instr = parseInstruction(instruction);
         execute_instruction(instr);
+        if(instr.op == HALT) break;
     }
 }
 
@@ -111,6 +112,7 @@ void execute_instruction(Instruction instr){
         case HALT: {
             halt(registers);
             freeMem(memorySegments);
+            programCounter = NULL;
             break;
         }
         case MAP:{

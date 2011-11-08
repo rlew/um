@@ -5,8 +5,8 @@
 #include <assert.h>
 
 /*
- * Increase the available set of IDs in unmappedIDs and sets the corresponding
- * IDs in mappedIDs to NULL
+ * Increase the available set of IDs (to at least the ID passed in) in 
+ * unmappedIDs and sets the corresponding IDs in mappedIDs to NULL. 
  */
 static void resizeMem(Mem* memorySegments, UM_Word ID) {
     UM_Word length = Seq_length(memorySegments->mappedIDs);
@@ -26,7 +26,8 @@ static void resizeMem(Mem* memorySegments, UM_Word ID) {
 
 /*
  * Allocates memory for the mapped and unmapped IDs in memory that can be used
- * to created mapped memory segments
+ * to created mapped memory segments. It is a c.r.t. to pass in a length less
+ * then or equal to zero.
  */
 void instantiateMem(Mem* mem, int length) {
     assert(length > 0);
@@ -40,7 +41,6 @@ void instantiateMem(Mem* mem, int length) {
         *value = i;
         Seq_addhi(mem->mappedIDs, NULL);
         Seq_addhi(mem->unmappedIDs, value);
-        printf("value store: %u\n", *(UM_Word*)Seq_get(mem->unmappedIDs, i));
     }
 }
 
@@ -88,16 +88,18 @@ void unmapSegment(Mem* memorySegments, UM_Word index) {
 }
 
 /*
- * Returns the memory segment stored at the specified ID and offset
+ * Returns the memory segment stored at the specified ID and offset. It is a
+ * c.r.t. for the ID to be unmapped.
  */
 UM_Word segmentedLoad(Mem* memorySegments, UM_Word ID, int offset){
+  assert(Seq_get(memorySegments->mappedIDs, ID));
   return *(UM_Word*)UArray_at((UArray_T)Seq_get(memorySegments->mappedIDs,
            ID), offset);
 }
 
 /*
  * Stores the value passed at the specified index and offset in the memory
- * segments
+ * segments. It is a c.r.t. for the ID to be unmapped
  */
 void segmentedStore(Mem* memorySegments, UM_Word ID, int offset, UM_Word
                        value){
