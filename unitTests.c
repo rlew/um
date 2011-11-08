@@ -9,7 +9,7 @@
 
 //PROBLEM: not passing things by reference / modifying within funcitons.
 
-static int MEM_SEG_LEN = 10;
+static int MEM_SEG_LEN = 1;
 
 void verifyMapped(Seq_T memorySegments, Seq_T unmappedSegments) {
     // Verifies that the available unmapped segments is updated upon mapping
@@ -45,21 +45,27 @@ int main(int argc, char* argv[]) {
     NEW(mem);
     instantiateMem(mem, MEM_SEG_LEN);
 
-    mapSegment(mem, 1, 10);
+    mapSegment(mem, 0, 10);
     verifyMapped(mem->mappedIDs, mem->unmappedIDs);
 
     UM_Word value = 20;
-    segmentedStore(mem, 1, 9, value);
+    segmentedStore(mem, 0, 9, value);
 
-    if(segmentedLoad(mem, 1, 9) != value) {
+    if(segmentedLoad(mem, 0, 9) != value) {
         fprintf(stderr, "incorrect load and store");
         exit(1);
     }
     else {
-        printf("value: %u\n", segmentedLoad(mem, 1, 9));
+        printf("value: %u\n", segmentedLoad(mem, 0, 9));
         printf("Woohoo! Correct seg store and load!\n");
     }
-    
+   
+    mapSegment(mem, 1, 1);
+    verifyMapped(mem->mappedIDs, mem->unmappedIDs);
+
+    unmapSegment(mem, 0);
+    verifyMapped(mem->mappedIDs, mem->unmappedIDs);
+
     unmapSegment(mem, 1);
     verifyMapped(mem->mappedIDs, mem->unmappedIDs);
 

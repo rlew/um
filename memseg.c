@@ -54,7 +54,8 @@ UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
         *elem = 0;
     }
 
-    UM_Word* availableID = (UM_Word*)Seq_get(memorySegments->unmappedIDs, ID);
+    UM_Word* availableID = (UM_Word*)Seq_put(memorySegments->unmappedIDs, ID,
+                                             NULL);
     UM_Word index = *availableID;
     FREE(availableID);
     Seq_put(memorySegments->mappedIDs, index, segment);
@@ -70,10 +71,7 @@ void unmapSegment(Mem* memorySegments, UM_Word index) {
     UArray_T segmentID = Seq_get(memorySegments->mappedIDs, index);
     UArray_free(&segmentID);
     Seq_put(memorySegments->mappedIDs, index, NULL);
-    UM_Word* value;
-    NEW(value);
-    *value = index;
-    Seq_addlo(memorySegments->unmappedIDs, value);
+    Seq_put(memorySegments->unmappedIDs, index, &index);
 }
 
 /*

@@ -39,17 +39,17 @@ done
 # link together .o files + libraries to make executable binaries
 # using one case statement per executable binary
 
-#case $link in
+case $link in
 
- # all|ut) gcc $FLAGS $LFLAGS -o ut memseg.o unitTests.o\
-  #                  $LIBS
+  all|ut) gcc $FLAGS $LFLAGS -o ut memseg.o unitTests.o\
+                    $LIBS
 
-   #                linked=yes ;;
-#esac
+                   linked=yes ;;
+esac
 
 case $link in
 
-  all|um) gcc $FLAGS $LFLAGS -o ut memseg.o registers.o um.o main.o\
+  all|machine) gcc $FLAGS $LFLAGS -o machine memseg.o registers.o um.o main.o\
                     $LIBS
 
                   linked=yes ;;
