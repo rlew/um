@@ -27,7 +27,7 @@ enum opcode {
 typedef struct{
     enum opcode op;
     UM_Word value, reg1, reg2, reg3;
-}Instruction; 
+}Instruction;
 
 int mapProgram(FILE* program);
 

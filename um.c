@@ -8,7 +8,9 @@ static UArray_T programCounter;
 static int INITIAL_SET_SIZE = 500;
 static int PROGRAM_HINT = 500;
 
-//Bit shifting to get to the relevant pieces of the word
+/*
+ * Returns a Instruction with a opcode and filled registers.
+ */
 static Instruction parseInstruction(UM_Word instructionCode){
     Instruction instr = { HALT, 0, 0, 0, 0 };
     instr.op = Bitpack_getu(instructionCode, 4, 28);
@@ -25,10 +27,14 @@ static Instruction parseInstruction(UM_Word instructionCode){
     return instr;
 }
 
+/*
+ * Creates memeory for the program to run and gets the instruction code along
+ * with the registers.
+ */
 void build_and_execute_um(FILE* program){
     NEW(memorySegments);
     instantiateMem(memorySegments, INITIAL_SET_SIZE);
-    
+
     int numInstr = mapProgram(program);
 
     for(int i = 0; i < numInstr; i++){
@@ -38,6 +44,9 @@ void build_and_execute_um(FILE* program){
     }
 }
 
+/*
+ * Initializes the program counter and returns the number of instructions.
+ */
 int mapProgram(FILE* program) {
     Seq_T words = Seq_new(PROGRAM_HINT);
     int c = getc(program);
@@ -65,7 +74,9 @@ int mapProgram(FILE* program) {
     return Seq_length(words);
 }
 
-
+/*
+ * Executes the Instruction based on the opcode.
+ */
 void execute_instruction(Instruction instr){
     switch(instr.op) {
         case MOVE:{
