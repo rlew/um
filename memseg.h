@@ -10,6 +10,7 @@ typedef uint32_t UM_Word;
 typedef struct Mem{
     Seq_T mappedIDs;
     Seq_T unmappedIDs;
+    int numMapped;
 }Mem;
 
 void instantiateMem(Mem* memorySegments, int length);

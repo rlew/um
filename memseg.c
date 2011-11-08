@@ -2,19 +2,24 @@
 #include "memseg.h"
 #include <stdio.h>
 #include <mem.h>
+#include <assert.h>
 
 /*
  * Increase the available set of IDs in unmappedIDs and sets the corresponding
  * IDs in mappedIDs to NULL
  */
-static void resizeMem(Mem* memorySegments) {
-    for(UM_Word i = (UM_Word)Seq_length(memorySegments->mappedIDs); 
-        i < (UM_Word)Seq_length(memorySegments->mappedIDs) * 2; i++) {
+static void resizeMem(Mem* memorySegments, UM_Word ID) {
+    UM_Word length = Seq_length(memorySegments->mappedIDs);
+    UM_Word max = length * 2;
+    if(ID > max){
+        max = ID + 1;
+    }
+    for(UM_Word i = length; i < max; i++) {
         UM_Word* value;
         NEW(value);
         *value = i;
         Seq_addhi(memorySegments->unmappedIDs, value);
-        Seq_put(memorySegments->mappedIDs, i, NULL);
+        Seq_addhi(memorySegments->mappedIDs, NULL);
     }
 
 }
@@ -24,8 +29,10 @@ static void resizeMem(Mem* memorySegments) {
  * to created mapped memory segments
  */
 void instantiateMem(Mem* mem, int length) {
+    assert(length > 0);
     mem->mappedIDs = Seq_new(length);
     mem->unmappedIDs = Seq_new(length);
+    mem->numMapped = 0;
     
     for(UM_Word i = 0; i < (UM_Word)length; i++) {
         UM_Word* value;
@@ -33,6 +40,7 @@ void instantiateMem(Mem* mem, int length) {
         *value = i;
         Seq_addhi(mem->mappedIDs, NULL);
         Seq_addhi(mem->unmappedIDs, value);
+        printf("value store: %u\n", *(UM_Word*)Seq_get(mem->unmappedIDs, i));
     }
 }
 
@@ -42,8 +50,9 @@ void instantiateMem(Mem* mem, int length) {
  * segment
  */
 UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
-    if(Seq_length(memorySegments->unmappedIDs) == 0){
-        resizeMem(memorySegments);
+    if(Seq_length(memorySegments->mappedIDs) == memorySegments->numMapped ||
+       (UM_Word)Seq_length(memorySegments->mappedIDs) <= ID){
+        resizeMem(memorySegments, ID);
     }
 
     UArray_T segment = UArray_new(length, sizeof(UM_Word));
@@ -59,6 +68,7 @@ UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
     UM_Word index = *availableID;
     FREE(availableID);
     Seq_put(memorySegments->mappedIDs, index, segment);
+    memorySegments->numMapped++;
 
     return segment;
 }
@@ -71,7 +81,10 @@ void unmapSegment(Mem* memorySegments, UM_Word index) {
     UArray_T segmentID = Seq_get(memorySegments->mappedIDs, index);
     UArray_free(&segmentID);
     Seq_put(memorySegments->mappedIDs, index, NULL);
-    Seq_put(memorySegments->unmappedIDs, index, &index);
+    UM_Word* value;
+    NEW(value);
+    *value = index;
+    Seq_put(memorySegments->unmappedIDs, index, value);
 }
 
 /*
@@ -88,8 +101,10 @@ UM_Word segmentedLoad(Mem* memorySegments, UM_Word ID, int offset){
  */
 void segmentedStore(Mem* memorySegments, UM_Word ID, int offset, UM_Word
                        value){
-    UM_Word* word = UArray_at((UArray_T)Seq_get(memorySegments->mappedIDs, ID),
-                              offset);
+    UArray_T temp = Seq_get(memorySegments->mappedIDs, ID);
+    assert(temp);
+    UM_Word* word = UArray_at(temp, offset);
+    assert(word);
     *word = value;
 }
 
