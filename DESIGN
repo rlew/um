@@ -1,0 +1,115 @@
+Trevor John
+Rachel Lew
+
+REGISTER REPRESENTATION:
+    1. Abstract Idea:
+        Within the instruction code, each register is referred to with 3 bits.
+        Depending on the context, registers can represent IDs of memory 
+        segments, offsets, or values to be subsequently stored or manipulated.
+
+    2. Functions
+        - void conditionalMove(int toSet, int original, int value);
+            Stores the value at $r[original] in $r[toSet] if $r[value] is not
+            0.
+        - void addition(int sum, int val1, int val2);
+            $r[sum] := $r[val1] + $r[val2]
+        - void multiplication(int product, int val1, int val2);
+            $r[product] := $r[val1] * $r[val2]
+        - void division(int quotient, int numerator, int denominator);
+            $r[quotient] := $r[numerator] / $r[denominator]
+        - void bitwiseAND(int result, int val1, int val2);
+            $r[result] := ~($r[val1] & $r[val2])
+        - void loadValue(int reg, UM_Word value);
+            value is stored into $r[reg]
+        - void input(int reg);
+            Value in $r[reg] is written from standard input. Input must be no
+            more than 8 bits.
+        - void output(int reg);
+            Value in $r[reg] is written to standard output. Output must be no
+            more than 8 bits.
+        - void halt();      
+            Instructions are halted and all memory allocated for the program
+            is freed. Registers are reinitalized to 0.
+
+    4. Representations and Invariants
+        This value is the index in an array of length 8 where each element in 
+        the array is a 32-bit word representing a register. 
+        Invariants: 
+        - A register is always a 32-bit word
+    Registers will be statically defined when the UM is created.
+
+MEMORY SEGMENT REPRESENTATION:  
+    1. Abstract Idea: 
+        Each memory segment is a sequence of 32-bit words.  Each word can be
+        referenced according to an ID (indicating in which memory segment to 
+        find it) and an offset (indicating where it resides in the sequence).
+
+    2. Functions
+        - void mapSegment(UArray_T memorySegments, UM_Word index, 
+                          int length);
+           Creates a new segment of the specified length and stores it in the
+           memorySegments array according to the available index in
+           unmappedSegs
+        - void unmapSegment(UArray_T memorySegments, UM_Word index);
+            Frees the segment associated with the index in the array of
+            indeces.
+        - UM_Word segmentedLoad(UArray_T memorySegments, int ID, int offset);
+            Returns the valus stored in the segment --> $m[ID][offset]
+        - void segmentedStore(UArray_T memorySegments, int ID, int offset, 
+                                 UM_Word value);
+            Stores the value passed in the corresponding memory segment -->
+            $m[ID][offset]
+        - UM_Word nextIndexToMap(Stack_T unmappedSegs);
+            Returns the next available index in the memorySegments
+        - void unmapIndex(Stack_T unmappedSegs, UM_Word index);
+            Adds an index to the list of available indeces
+        
+        4. Representations and Invariants
+        In order to minimize access time, we are utilizing arrays and 
+        sequences. All IDs are represented in an array. Their indeces 
+        correspond to the ID of the memory segment. Each ID will contain a 
+        pointer to an sequence of 32-bit words. The ID will be the index in
+        the larger array and the offset will be the index in the smaller array.
+        
+        Invariants:
+        - No offset can be greater than the size of the sequence of
+          32-bit words at a given register. Size is specified upon the creation
+          of the segment and is a property of the segment.
+        - No ID can refer to more than one memory segment. It is a unique
+          identifer of a memory segment.
+        - A NULL pointer at an index signifies that that ID is unmapped
+    Memory Segments will be statically defined when the UM is created.
+    
+UNIVERSAL MACHINE DESIGN CHECKLIST:
+    1. Major Components and Interfaces (see above)
+        - UM
+        - Registers
+        - Memory Segments
+    2. Architecture
+        Because we are creating a virtual machine, we are using the registers
+        to mimic the GPRs and the memory segments to mimic the address space.
+        The main function will instantiate the um and build all the
+        corresponding registers and memory segments, and the UM will execute
+        the program files passed to it by loading the various instructions
+        into registers.
+        While main is responsible for setting up the UM, the actual execution
+        of the program is separated in order to uphold the idea of a machine
+        operating on top of the computer's hardware.
+        Registers are the main unit of interest for program execution. 
+        Individual instructions update the registers according to the 
+        specified operation; whereas memory segments manage data storage in the
+        long term. They are updated by stores from the registers, and the data
+        in them can be retrieved to and subsequently manipulated in the 
+        registers by segmented loads.
+        Because segments deal with memory management and registers deal with
+        data manipulation, they can be examined independently with unit tests.
+    3. Test Cases
+        - Tests for all the basic commands:
+            Running each command individually to ensure that each instruction
+            code is executed as expected
+        - Combining Halt instruction with various instructions:
+            Ensuring that Halt instruction works after every other instruction
+        - Combining Input and Output:
+            Using their inverse relationship to ensure that std input is stored
+            correctly and then subsequently loaded correctly to std output
+        - Using multiple programs to be loaded in sequence
