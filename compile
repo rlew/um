@@ -16,7 +16,7 @@ CIILIBS=`pkg-config --libs cii40`
 
 # compile and link against course software and netpbm library
 CFLAGS="-I. -I/comp/40/include $CIIFLAGS"
-LIBS="$CIILIBS -lum-dis -lcii -lbitpack"
+LIBS="-lbitpack $CIILIBS -lum-dis -lcii"
 LFLAGS="-L/comp/40/lib64"
 
 # these flags max out warnings and debug info
@@ -47,9 +47,17 @@ case $link in
                    linked=yes ;;
 esac
 
+#case $link in
+
+ # all|machine) gcc $FLAGS $LFLAGS -o machine memseg.o registers.o um.o main.o\
+  #                  $LIBS
+
+   #               linked=yes ;;
+#esac
+
 case $link in
 
-  all|machine) gcc $FLAGS $LFLAGS -o machine memseg.o registers.o um.o main.o\
+  all|reg) gcc $FLAGS $LFLAGS -o reg memseg.o registers.o unitTestsRegisters.o\
                     $LIBS
 
                   linked=yes ;;

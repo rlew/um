@@ -2,7 +2,9 @@
 #include "mem.h"
 #include "bitpack.h"
 
-static UM_Word registers[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+/* Registers and memory statically defined upon creation of the machine. */
+#define numRegisters 8
+static UM_Word registers[numRegisters];
 static Mem* memorySegments;
 static UArray_T programCounter;
 static int INITIAL_SET_SIZE = 500;
@@ -34,6 +36,7 @@ static Instruction parseInstruction(UM_Word instructionCode){
 void build_and_execute_um(FILE* program){
     NEW(memorySegments);
     instantiateMem(memorySegments, INITIAL_SET_SIZE);
+    initializeRegisters(registers, numRegisters);
 
     int numInstr = mapProgram(program);
 
@@ -110,7 +113,6 @@ void execute_instruction(Instruction instr){
             bitwiseNAND(registers, instr.reg1, instr.reg2, instr.reg3);
             break;
         case HALT: {
-            halt(registers);
             freeMem(memorySegments);
             programCounter = NULL;
             break;

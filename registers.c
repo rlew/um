@@ -5,12 +5,26 @@
 #include <stdlib.h>
 #include <mem.h>
 
+#define RegIDWidth 3
+Except_T Register_Invalid = { "Register out of range.\n" };
+
+void initializeRegisters(UM_Word* registers, int numRegisters){
+    for(int i = 0; i < numRegisters; i++){
+        registers[i] = 0;
+    }
+}
+
 /*
  * Stores the value at $r[original] in $r[toSet] if value is not 0. Called
  * with command 0.
  */
 void conditionalMove(UM_Word* registers, UM_Word toSet, UM_Word original,
                      UM_Word value){
+    assert(registers);
+    if(toSet >> RegIDWidth != 0 || original >> RegIDWidth != 0 || 
+        value >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     if(registers[value] != 0)
         registers[toSet] = registers[original];
 }
@@ -20,6 +34,11 @@ void conditionalMove(UM_Word* registers, UM_Word toSet, UM_Word original,
  * bits and stores the sum in $r[sum]. Called with command 3.
  */
 void addition(UM_Word* registers, UM_Word sum, UM_Word val1, UM_Word val2) {
+    assert(registers);
+    if(sum >> RegIDWidth != 0 || val1 >> RegIDWidth != 0 || 
+        val2 >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     registers[sum] = registers[val1] + registers[val2];
 }
 
@@ -29,6 +48,11 @@ void addition(UM_Word* registers, UM_Word sum, UM_Word val1, UM_Word val2) {
  */
 void multiplication(UM_Word* registers, UM_Word product, UM_Word val1, 
                     UM_Word val2) {
+    assert(registers);
+    if(product >> RegIDWidth != 0 || val1 >> RegIDWidth != 0 || 
+        val2 >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     registers[product] = registers[val1] * registers[val2];
 }
 
@@ -39,6 +63,11 @@ void multiplication(UM_Word* registers, UM_Word product, UM_Word val1,
  */
 void division(UM_Word* registers, UM_Word quotient, UM_Word numerator, 
               UM_Word denominator) {
+    assert(registers);
+    if(quotient >> RegIDWidth != 0 || numerator >> RegIDWidth != 0 || 
+        denominator >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     assert(denominator);
     registers[quotient] = registers[numerator] / registers[denominator];
 }
@@ -49,6 +78,11 @@ void division(UM_Word* registers, UM_Word quotient, UM_Word numerator,
  */
 void bitwiseNAND(UM_Word* registers, UM_Word result, UM_Word val1, 
                  UM_Word val2) {
+    assert(registers);
+    if(result >> RegIDWidth != 0 || val1 >> RegIDWidth != 0 || 
+        val2 >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     registers[result] = ~(registers[val1] & registers[val2]);
 }
 
@@ -56,6 +90,10 @@ void bitwiseNAND(UM_Word* registers, UM_Word result, UM_Word val1,
  * Load the value passed into the register $r[reg]. Called with command 13.
  */
 void loadValue(UM_Word* registers, UM_Word reg, UM_Word value) {
+    assert(registers);
+    if(reg >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     registers[reg] = value;
 }
 
@@ -64,6 +102,10 @@ void loadValue(UM_Word* registers, UM_Word reg, UM_Word value) {
  * command 11.
  */
 void input(UM_Word* registers, UM_Word reg) {
+    assert(registers);
+    if(reg >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     int c = getc(stdin);
     if(c == '\n'){
         UM_Word one = 0;
@@ -82,13 +124,18 @@ void input(UM_Word* registers, UM_Word reg) {
  * Reads the value in $r[reg] to std output. Called with command 10.
  */
 void output(UM_Word* registers, UM_Word reg) {
+    assert(registers);
+    if(reg >> RegIDWidth != 0) {
+        RAISE(Register_Invalid);
+    }
     putchar((char)registers[reg]);
 }
 
 /*
  * Halts all program operations and frees all corresponding memory. Called
  * with command 7.
- */
+ 
 void halt(UM_Word* registers){
+    assert(registers);
     FREE(registers);
-}
+}*/
