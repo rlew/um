@@ -7,7 +7,37 @@
 static UM_Word registers[numReg];
 
 void testConditionalMove(){
-    registers[0] = 1;
+    for(int i = 0; i < numReg; i++) {
+        loadValue(registers, i, i);
+    }
+    
+    conditionalMove(registers, 3, 2, 3);
+    if(registers[3] != registers[2])
+        printf("Test failed on non zero move 1.\n");
+
+    conditionalMove(registers, 2, 0, 0);
+    if(registers[2] == registers[0])
+        printf("Test failed on zero move 2.\n");
+
+
+    for(int i = 1; i < numReg; i++){
+        conditionalMove(registers, i, 0, 0);
+        if(registers[i] == registers[0]){
+          printf("Test failed on zero move %d.\n", i);
+          exit(2);
+        }
+    }
+
+    for(int i = 1; i < numReg; i++){
+        conditionalMove(registers, 0, i, i);
+        if(registers[0] != registers[i]){
+            printf("test failed on non zero move %d.\n", i);
+            exit(3);
+        }
+    }
+
+    printf("Conditional Move passed.\n");
+  /*  registers[0] = 1;
     registers[1] = 10;
     registers[2] = 11;
 
@@ -24,7 +54,7 @@ void testConditionalMove(){
     printf("Expected in %d: %d\n", 3, 2000);
     for(int i = 0; i < numReg; i++){
         printf("Index %d: %u\n", i, registers[i]);
-    }
+    }*/
 }
 
 void testMultiplication(){

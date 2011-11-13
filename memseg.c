@@ -5,8 +5,8 @@
 #include <assert.h>
 
 /*
- * Increase the available set of IDs (to at least the ID passed in) in 
- * unmappedIDs and sets the corresponding IDs in mappedIDs to NULL. 
+ * Increase the available set of IDs (to at least the ID passed in) in
+ * unmappedIDs and sets the corresponding IDs in mappedIDs to NULL.
  */
 static void resizeMem(Mem* memorySegments, UM_Word ID) {
     UM_Word length = Seq_length(memorySegments->mappedIDs);
@@ -34,7 +34,7 @@ void instantiateMem(Mem* mem, int length) {
     mem->mappedIDs = Seq_new(length);
     mem->unmappedIDs = Seq_new(length);
     mem->numMapped = 0;
-    
+
     for(UM_Word i = 0; i < (UM_Word)length; i++) {
         UM_Word* value;
         NEW(value);
@@ -56,7 +56,7 @@ UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
     }
 
     UArray_T segment = UArray_new(length, sizeof(UM_Word));
-    
+
     // Initializing each UM_Word in the memory segment to 0
     for(UM_Word i = 0; i < (UM_Word)length; i++) {
         UM_Word* elem = UArray_at(segment, i);
@@ -128,7 +128,7 @@ void freeMem(Mem* memorySegments) {
     while(Seq_length(memorySegments->mappedIDs) != 0) {
         UArray_T seg = Seq_remlo(memorySegments->mappedIDs);
         if(seg != NULL) {
-            UArray_free(seg);
+            UArray_free(&seg);
         }
     }
     while(Seq_length(memorySegments->unmappedIDs) != 0) {

@@ -29,7 +29,7 @@ void verifyMapped(Seq_T memorySegments, Seq_T unmappedSegments) {
             }
             UArray_T temp = Seq_get(memorySegments, i);
             for(UM_Word j = 0; j < (UM_Word)UArray_length(temp); j++) {
-                UM_Word value = *(UM_Word*)UArray_at(temp, j); 
+                UM_Word value = *(UM_Word*)UArray_at(temp, j);
                 if(value != 0){
                     printf("Segmented load at %d with value of %u\n", i, value);
                 }
@@ -38,6 +38,7 @@ void verifyMapped(Seq_T memorySegments, Seq_T unmappedSegments) {
     }
     printf("Verified\n");
 }
+
 
 int main(int argc, char* argv[]) {
     (void) argc; (void) argv;
@@ -61,7 +62,7 @@ int main(int argc, char* argv[]) {
         printf("value at memseg: %u\n", segmentedLoad(mem, 0, 9));
         printf("Woohoo! Correct seg store and load!\n");
     }
-  
+
     printf("resizing\n");
     mapSegment(mem, 11, 1);
     printf("verifying index 1 mapping\n");
