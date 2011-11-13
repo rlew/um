@@ -14,7 +14,7 @@ typedef struct Mem{
 }Mem;
 
 void instantiateMem(Mem* memorySegments, int length);
-UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length);
+void mapSegment(Mem* memorySegments, UM_Word ID, int length);
 void unmapSegment(Mem* memorySegments, UM_Word index);
 UArray_T getIndex(Mem* memorySegments, UM_Word ID);
 UArray_T segmentCopy(Mem* memorySegments, UM_Word ID);

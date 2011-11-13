@@ -49,7 +49,7 @@ void instantiateMem(Mem* mem, int length) {
  * segment of memory of the specified length. Returns the index of the mapped
  * segment
  */
-UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
+void mapSegment(Mem* memorySegments, UM_Word ID, int length) {
     if(Seq_length(memorySegments->mappedIDs) == memorySegments->numMapped ||
        (UM_Word)Seq_length(memorySegments->mappedIDs) <= ID){
         resizeMem(memorySegments, ID);
@@ -69,8 +69,6 @@ UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
     FREE(availableID);
     Seq_put(memorySegments->mappedIDs, index, segment);
     memorySegments->numMapped++;
-
-    return segment;
 }
 
 /*
@@ -78,9 +76,8 @@ UArray_T mapSegment(Mem* memorySegments, UM_Word ID, int length) {
  * with the given ID
  */
 void unmapSegment(Mem* memorySegments, UM_Word index) {
-    UArray_T segmentID = Seq_get(memorySegments->mappedIDs, index);
+    UArray_T segmentID = Seq_put(memorySegments->mappedIDs, index, NULL);
     UArray_free(&segmentID);
-    Seq_put(memorySegments->mappedIDs, index, NULL);
     UM_Word* value;
     NEW(value);
     *value = index;
@@ -133,7 +130,9 @@ void freeMem(Mem* memorySegments) {
     }
     while(Seq_length(memorySegments->unmappedIDs) != 0) {
         UM_Word* ID = Seq_remlo(memorySegments->unmappedIDs);
-        FREE(ID);
+        if(ID != NULL) {
+            FREE(ID);
+        }
     }
     Seq_free(&memorySegments->mappedIDs);
     Seq_free(&memorySegments->unmappedIDs);

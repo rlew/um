@@ -69,7 +69,8 @@ int mapProgram(FILE* program) {
         c = getc(program);
     }
 
-    programCounter = mapSegment(memorySegments, 0, Seq_length(words));
+    mapSegment(memorySegments, 0, Seq_length(words));
+    programCounter = Seq_get(memorySegments->mappedIDs, 0);
 
     for(UM_Word locToLoad = 0; locToLoad < (UM_Word)Seq_length(words); locToLoad++){
         UM_Word value = *(UM_Word*)Seq_get(words, locToLoad);
@@ -140,9 +141,9 @@ void execute_instruction(Instruction instr){
             UM_Word ID = registers[instr.reg2];
             UArray_T copy = segmentCopy(memorySegments, ID);
             unmapSegment(memorySegments, 0);
-            UArray_T toSet = mapSegment(memorySegments, 0, UArray_length(copy));
-            FREE(toSet);
-            toSet = copy;
+            mapSegment(memorySegments, 0, UArray_length(copy));
+            UArray_T toFree = Seq_put(memorySegments->mappedIDs, 0, copy);
+            UArray_free(&toFree);
             break;
         }
         case LOADVAL:

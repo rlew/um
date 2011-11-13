@@ -177,7 +177,9 @@ void emit_NAND_test(Seq_T stream){
 }
 
 void emit_mapUnmap_test(Seq_T stream){
-    (void)stream;
+    emit(stream, loadval(r1, 1));
+    emit(stream, map(r1, r1));
+    emit(stream, halt());
 }
 
 
