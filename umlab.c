@@ -98,7 +98,12 @@ void emit_halt_test(Seq_T stream) {
     emit(stream, loadval(r1, '\n'));
     emit(stream, output(r1));
 }
-/*
+
+void emit_IO_test(Seq_T stream) {
+    emit(stream, input(r1));
+    emit(stream, output(r1));
+}
+
 static void add_label(Seq_T stream, int location_to_patch, int label_value) {
     Um_instruction inst = get_inst(stream, location_to_patch);
     unsigned k = Bitpack_getu(inst, 25, 0);
@@ -106,7 +111,12 @@ static void add_label(Seq_T stream, int location_to_patch, int label_value) {
     put_inst(stream, location_to_patch, inst);
 }
 
-static void emit_out_string(Seq_T stream, const char *s, int aux_reg);
+static void emit_out_string(Seq_T stream, const char *s, int aux_reg){
+    for(int i = 0; s[i] != '\0'; i++) {
+        emit(stream, loadval(aux_reg, s[i]));
+        emit(stream, output(aux_reg));
+    }
+}
 
 void emit_goto_test(Seq_T stream) {
     int patch_L = Seq_length(stream);
@@ -117,4 +127,4 @@ void emit_goto_test(Seq_T stream) {
     add_label(stream, patch_L, Seq_length(stream)); // define 'L' to be here
     emit_out_string(stream, "GOTO passed.\n", r1);
     emit(stream, halt());
-} */ 
+} 

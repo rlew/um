@@ -16,7 +16,8 @@ Um_instruction loadval(unsigned ra, unsigned val);
 enum regs { r0 = 0, r1, r2, r3, r4, r5, r6, r7 };
 
 extern void emit_halt_test(Seq_T stream);
-//extern void emit_goto_test(Seq_T stream);
+extern void emit_goto_test(Seq_T stream);
+extern void emit_IO_test(Seq_T stream);
 
 enum Um_opcode {
     MOVE = 0,

@@ -16,8 +16,9 @@ static struct test_info {
   const char *expected_output;
   void (*emit_test)(Seq_T stream); // writes instructions into sequence
 } tests[] = {
-  { "halt", NULL, "",               emit_halt_test }/*,
-  { "goto", NULL, "GOTO passed.\n", emit_goto_test },*/
+  { "halt", NULL, "",               emit_halt_test },
+  { "goto", NULL, "GOTO passed.\n", emit_goto_test },
+  { "IO", "h", "h", emit_IO_test }
 };
   
 #define NTESTS (sizeof(tests)/sizeof(tests[0]))

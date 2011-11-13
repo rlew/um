@@ -7,8 +7,8 @@
 static UM_Word registers[numRegisters];
 static Mem* memorySegments;
 static UArray_T programCounter;
-static int INITIAL_SET_SIZE = 500;
-static int PROGRAM_HINT = 500;
+static int INITIAL_SET_SIZE = 500; // Number of memory segment IDs
+static int PROGRAM_HINT = 500;     // Number of program instructions
 
 /*
  * Returns a Instruction with a opcode and filled registers.
@@ -136,9 +136,9 @@ void execute_instruction(Instruction instr){
             input(registers, instr.reg1);
             break;
         case LOADPROG:{
-            unmapSegment(memorySegments, 0);
             UM_Word ID = registers[instr.reg2];
             UArray_T copy = segmentCopy(memorySegments, ID);
+            unmapSegment(memorySegments, 0);
             UArray_T toSet = mapSegment(memorySegments, 0, UArray_length(copy));
             FREE(toSet);
             toSet = copy;
