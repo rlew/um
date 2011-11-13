@@ -50,6 +50,8 @@ void build_and_execute_um(FILE* program){
         execute_instruction(instr);
         if(instr.op == HALT) break;
     }
+
+    freeMem(memorySegments);
 }
 
 /*
@@ -63,7 +65,6 @@ int mapProgram(FILE* program) {
         for(int bit = 16; bit >=0; bit -=8){
             int b = getc(program);
             temp = Bitpack_newu(temp, 8, bit, b);
-            //printf("bits: %u\n", temp);
         }
 
         UM_Word* instr;
@@ -76,11 +77,13 @@ int mapProgram(FILE* program) {
     mapSegment(memorySegments, 0, Seq_length(words));
 
     for(UM_Word locToLoad = 0; locToLoad < (UM_Word)Seq_length(words); locToLoad++){
-        UM_Word value = *(UM_Word*)Seq_get(words, locToLoad);
-        segmentedStore(memorySegments, 0, locToLoad, value);
+        UM_Word* value = (UM_Word*)Seq_get(words, locToLoad);
+        segmentedStore(memorySegments, 0, locToLoad, *value);
+        FREE(value);
     }
 
-    return Seq_length(words);
+    Seq_free(&words);
+    return UArray_length((UArray_T)Seq_get(memorySegments->mappedIDs, 0));
 }
 
 /*
@@ -130,8 +133,6 @@ void execute_instruction(Instruction instr){
             break;
         }
         case HALT: {
-            freeMem(memorySegments);
-            exit(4);
             programCounter = 0;
             break;
         }

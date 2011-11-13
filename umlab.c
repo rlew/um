@@ -102,6 +102,7 @@ static void emit_out_string(Seq_T stream, const char *s, int aux_reg){
 }
 
 void emit_halt_test(Seq_T stream) {
+    (void)stream;
     emit(stream, halt());
     emit(stream, loadval(r1, 'B'));
     emit(stream, output(r1));
@@ -177,8 +178,19 @@ void emit_NAND_test(Seq_T stream){
 }
 
 void emit_mapUnmap_test(Seq_T stream){
-    emit(stream, loadval(r1, 1));
-    emit(stream, map(r1, r1));
+    emit(stream, loadval(r0, 1));
+    emit(stream, loadval(r3, 100));
+    emit(stream, loadval(r1, 97));
+    for (int i = 0; i < 10; i++) {
+        emit(stream, map(r0, r3));
+        for(int j = 0; j < 100; j++) {
+            emit(stream, loadval(r4, j));
+            emit(stream, segmentedStore(r0, r4, r1));
+            emit(stream, segmentedLoad(r2, r0, r4));
+            emit(stream, output(r2));
+        }
+        emit(stream, unmap(r0));
+    }
     emit(stream, halt());
 }
 

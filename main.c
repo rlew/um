@@ -16,5 +16,6 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "File failed to open.\n");
         exit(1);
     }
+    fclose(program);
     return 0;
 }

@@ -88,6 +88,7 @@ void unmapSegment(Mem* memorySegments, UM_Word index) {
     NEW(value);
     *value = index;
     Seq_put(memorySegments->unmappedIDs, index, value);
+    memorySegments->numMapped--;
 }
 
 /*
