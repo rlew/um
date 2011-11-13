@@ -6,7 +6,7 @@
 #define numRegisters 8
 static UM_Word registers[numRegisters];
 static Mem* memorySegments;
-static UArray_T programCounter;
+static int programCounter;
 static int INITIAL_SET_SIZE = 500; // Number of memory segment IDs
 static int PROGRAM_HINT = 500;     // Number of program instructions
 
@@ -39,9 +39,13 @@ void build_and_execute_um(FILE* program){
     initializeRegisters(registers, numRegisters);
 
     mapProgram(program);
-
-    for(int i = 0; i < UArray_length(programCounter); i++){
-        UM_Word instruction = *(UM_Word*)UArray_at(programCounter, i);
+    programCounter = 0;
+    
+    while(programCounter < 
+          UArray_length((UArray_T)Seq_get(memorySegments->mappedIDs, 0)))
+    {
+        UM_Word instruction = *(UM_Word*)UArray_at(
+            (UArray_T)Seq_get(memorySegments->mappedIDs, 0), programCounter);
         Instruction instr = parseInstruction(instruction);
         execute_instruction(instr);
         if(instr.op == HALT) break;
@@ -70,7 +74,6 @@ int mapProgram(FILE* program) {
     }
 
     mapSegment(memorySegments, 0, Seq_length(words));
-    programCounter = Seq_get(memorySegments->mappedIDs, 0);
 
     for(UM_Word locToLoad = 0; locToLoad < (UM_Word)Seq_length(words); locToLoad++){
         UM_Word value = *(UM_Word*)Seq_get(words, locToLoad);
@@ -87,12 +90,15 @@ void execute_instruction(Instruction instr){
     switch(instr.op) {
         case MOVE:{
             conditionalMove(registers, instr.reg1, instr.reg2, instr.reg3);
-            break;}
+            programCounter++;
+            break;
+        }
         case SEGLOAD:{
             UM_Word ID = registers[instr.reg2];
             UM_Word offset = registers[instr.reg3];
             UM_Word toStore = segmentedLoad(memorySegments, ID, offset);
             registers[instr.reg1] = toStore;
+            programCounter++;
             break;
         }
         case SEGSTORE:{
@@ -100,43 +106,58 @@ void execute_instruction(Instruction instr){
             UM_Word offset = registers[instr.reg2];
             UM_Word value = registers[instr.reg3];
             segmentedStore(memorySegments, ID, offset, value);
+            programCounter++;
             break;
         }
-        case ADD:
+        case ADD:{
             addition(registers, instr.reg1, instr.reg2, instr.reg3);
+            programCounter++;
             break;
-        case MULTIPLY:
+        }
+        case MULTIPLY:{
             multiplication(registers, instr.reg1, instr.reg2, instr.reg3);
+            programCounter++;
             break;
-        case DIVIDE:
+        }
+        case DIVIDE:{
             division(registers, instr.reg1, instr.reg2, instr.reg3);
+            programCounter++;
             break;
-        case NAND:
+        }
+        case NAND:{
             bitwiseNAND(registers, instr.reg1, instr.reg2, instr.reg3);
+            programCounter++;
             break;
+        }
         case HALT: {
             freeMem(memorySegments);
-            programCounter = NULL;
             exit(4);
+            programCounter = 0;
             break;
         }
         case MAP:{
             UM_Word length = registers[instr.reg3];
             UM_Word ID = registers[instr.reg2];
             mapSegment(memorySegments, ID, length);
+            programCounter++;
             break;
         }
         case UNMAP:{
             UM_Word ID = registers[instr.reg3];
             unmapSegment(memorySegments, ID);
+            programCounter++;
             break;
         }
-        case OUTPUT:
+        case OUTPUT:{
             output(registers, instr.reg3);
+            programCounter++;
             break;
-        case INPUT:
+        }
+        case INPUT:{
             input(registers, instr.reg3);
+            programCounter++;
             break;
+        }
         case LOADPROG:{
             UM_Word ID = registers[instr.reg2];
             UArray_T copy = segmentCopy(memorySegments, ID);
@@ -144,10 +165,13 @@ void execute_instruction(Instruction instr){
             mapSegment(memorySegments, 0, UArray_length(copy));
             UArray_T toFree = Seq_put(memorySegments->mappedIDs, 0, copy);
             UArray_free(&toFree);
+            programCounter = registers[instr.reg3];
             break;
         }
-        case LOADVAL:
+        case LOADVAL:{
             loadValue(registers, instr.reg1, instr.value);
+            programCounter++;
             break;
+        }
     }
 }

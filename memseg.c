@@ -65,6 +65,12 @@ void mapSegment(Mem* memorySegments, UM_Word ID, int length) {
 
     UM_Word* availableID = (UM_Word*)Seq_put(memorySegments->unmappedIDs, ID,
                                              NULL);
+    ID = memorySegments->numMapped;
+    while(availableID == NULL){
+        availableID = (UM_Word*)Seq_put(memorySegments->unmappedIDs, ID,
+                                        NULL);
+        ID++;
+    }
     UM_Word index = *availableID;
     FREE(availableID);
     Seq_put(memorySegments->mappedIDs, index, segment);
