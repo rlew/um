@@ -41,19 +41,28 @@ done
 
 case $link in
 
-  all|ut) gcc $FLAGS $LFLAGS -o ut memseg.o unitTests.o\
+  all|mem) gcc $FLAGS $LFLAGS -o mem memseg.o unitTests.o\
                     $LIBS
 
                    linked=yes ;;
 esac
 
-#case $link in
+case $link in
 
- # all|machine) gcc $FLAGS $LFLAGS -o machine memseg.o registers.o um.o main.o\
-  #                  $LIBS
+  all|um) gcc $FLAGS $LFLAGS -o um memseg.o registers.o um.o main.o\
+                    $LIBS
 
-   #               linked=yes ;;
-#esac
+                  linked=yes ;;
+esac
+
+case $link in
+
+  all|ut) gcc $FLAGS $LFLAGS -o ut memseg.o registers.o um.o umlab.o\
+  umlabwrite.o\
+                    $LIBS
+
+                  linked=yes ;;
+esac
 
 case $link in
 

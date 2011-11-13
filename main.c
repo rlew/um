@@ -7,7 +7,7 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "No executables provided.\n");
         exit(1);
     }
-    FILE* program = fopen(argv[2], "r");
+    FILE* program = fopen(argv[1], "r");
     if(!program) {
         fprintf(stderr, "File failed to open.\n");
         exit(1);

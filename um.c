@@ -115,6 +115,7 @@ void execute_instruction(Instruction instr){
         case HALT: {
             freeMem(memorySegments);
             programCounter = NULL;
+            exit(4);
             break;
         }
         case MAP:{

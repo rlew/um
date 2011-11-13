@@ -8,7 +8,7 @@
 
 
 enum opcode {
-    MOVE,
+    MOVE = 0,
     SEGLOAD,
     SEGSTORE,
     ADD,
