@@ -128,12 +128,13 @@ void freeMem(Mem* memorySegments) {
     while(Seq_length(memorySegments->mappedIDs) != 0) {
         UArray_T seg = Seq_remlo(memorySegments->mappedIDs);
         if(seg != NULL) {
-            UArray_free(&seg);
+            UArray_free(seg);
         }
     }
     while(Seq_length(memorySegments->unmappedIDs) != 0) {
         UM_Word* ID = Seq_remlo(memorySegments->unmappedIDs);
-        FREE(ID);
+        if(ID != NULL)
+          FREE(ID);
     }
     Seq_free(&memorySegments->mappedIDs);
     Seq_free(&memorySegments->unmappedIDs);

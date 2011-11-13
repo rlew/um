@@ -116,7 +116,7 @@ void execute_instruction(Instruction instr){
         case HALT: {
             freeMem(memorySegments);
             programCounter = NULL;
-            exit(4);
+            exit(0);
             break;
         }
         case MAP:{
@@ -142,7 +142,9 @@ void execute_instruction(Instruction instr){
             unmapSegment(memorySegments, 0);
             UArray_T toSet = mapSegment(memorySegments, 0, UArray_length(copy));
             FREE(toSet);
+            FREE(programCounter);
             toSet = copy;
+            programCounter = toSet;
             break;
         }
         case LOADVAL:

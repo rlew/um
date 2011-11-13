@@ -156,19 +156,21 @@ void emit_divide_test(Seq_T stream){
 
 void emit_move_test(Seq_T stream){
     int L1 = Seq_length(stream);
-    emit(stream, loadval(r7, 0));
     int L2 = Seq_length(stream);
+    emit(stream, loadval(r7, 0));
     emit(stream, loadval(r6, 0));
     
     emit(stream, conditionalMove(r7, r6, r0));
     emit(stream, loadprogram(r0, r7));
+
     add_label(stream, L2, Seq_length(stream));
-    emit_out_string(stream, "Conditional Move on zero register failed.\n",
-                    r5);
+
+    emit_out_string(stream, "Conditional Move on zero register failed.\n", r5);
     emit(stream, halt());
+
     add_label(stream, L1, Seq_length(stream));
-    emit_out_string(stream, "Conditional Move on zero register passed.\n",
-                    r5);
+
+    emit_out_string(stream, "Conditional Move on zero register passed.\n", r5);
     emit(stream, halt());
 }
 
@@ -177,7 +179,10 @@ void emit_NAND_test(Seq_T stream){
 }
 
 void emit_mapUnmap_test(Seq_T stream){
-    (void)stream;
+  emit(stream, loadval(r2, 1));
+  emit(stream, loadval(r1, 1));
+  emit(stream, map(r1, r2));
+  emit(stream, halt());
 }
 
 
