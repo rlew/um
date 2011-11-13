@@ -108,9 +108,8 @@ void input(UM_Word* registers, UM_Word reg) {
     }
     int c = getc(stdin);
     if(c == '\n'){
-        UM_Word one = 0;
-        one = ~one;
-        registers[reg] = one;
+        UM_Word mask = ~0;
+        registers[reg] = mask;
     }
     else {
         if(c > 255 && c < 0) 

@@ -18,7 +18,7 @@ static struct test_info {
 } tests[] = {
   { "halt", NULL, "",               emit_halt_test },
   { "goto", NULL, "GOTO passed.\n", emit_goto_test },
-  { "IO", "h", "h", emit_IO_test }
+  { "IO", "hello world!", "hello world!", emit_IO_test }
 };
   
 #define NTESTS (sizeof(tests)/sizeof(tests[0]))

@@ -39,7 +39,9 @@ Um_instruction loadval(unsigned ra, unsigned val){
     Um_instruction instr = 0;
     instr = Bitpack_newu(instr, 4, 28, op);
     instr = Bitpack_newu(instr, 3, 25, ra);
+    //printf("val: %u\n", val);
     instr = Bitpack_newu(instr, 25, 0, val);
+    //printf("instr: %u\n", instr);
     return instr;
 }
 
@@ -100,8 +102,23 @@ void emit_halt_test(Seq_T stream) {
 }
 
 void emit_IO_test(Seq_T stream) {
-    emit(stream, input(r1));
-    emit(stream, output(r1));
+    emit(stream, loadval(r2, 1));
+    emit(stream, loadval(r3, 12));
+    emit(stream, map(r2, r3));
+    for(int i = 0; i < 12; i++) {
+        //emit(stream, input(r1));
+        //emit(stream, loadval(r3, i));
+        //emit(stream, segmentedStore(r2, r3, r1));
+        //emit(stream, segmentedLoad(r1, r2, r3));
+        //emit(stream, output(r7));
+    }
+    emit(stream, loadval(r6, 'r'));
+    emit(stream, output(r6));
+    for(int i = 0; i < 12; i++) {
+        //emit(stream, loadval(r3, i));
+        //emit(stream, segmentedLoad(r1, r2, r3));
+        //emit(stream, output(r1));
+    }
 }
 
 static void add_label(Seq_T stream, int location_to_patch, int label_value) {
@@ -121,7 +138,7 @@ static void emit_out_string(Seq_T stream, const char *s, int aux_reg){
 void emit_goto_test(Seq_T stream) {
     int patch_L = Seq_length(stream);
     emit(stream, loadval(r7, 0));  // will be patched to 'r7 := L'
-    emit(stream, loadprogram(r7, r0)); // should goto label L
+    emit(stream, loadprogram(r0, r7)); // should goto label L
     emit_out_string(stream, "GOTO failed.\n", r1);
     emit(stream, halt());
     add_label(stream, patch_L, Seq_length(stream)); // define 'L' to be here

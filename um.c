@@ -38,9 +38,9 @@ void build_and_execute_um(FILE* program){
     instantiateMem(memorySegments, INITIAL_SET_SIZE);
     initializeRegisters(registers, numRegisters);
 
-    int numInstr = mapProgram(program);
+    mapProgram(program);
 
-    for(int i = 0; i < numInstr; i++){
+    for(int i = 0; i < UArray_length(programCounter); i++){
         UM_Word instruction = *(UM_Word*)UArray_at(programCounter, i);
         Instruction instr = parseInstruction(instruction);
         execute_instruction(instr);
@@ -59,6 +59,7 @@ int mapProgram(FILE* program) {
         for(int bit = 16; bit >=0; bit -=8){
             int b = getc(program);
             temp = Bitpack_newu(temp, 8, bit, b);
+            //printf("bits: %u\n", temp);
         }
 
         UM_Word* instr;
