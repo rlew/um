@@ -68,7 +68,7 @@ void division(UM_Word* registers, UM_Word quotient, UM_Word numerator,
         denominator >> RegIDWidth != 0) {
         RAISE(Register_Invalid);
     }
-    assert(denominator);
+    assert(registers[denominator]);
     registers[quotient] = registers[numerator] / registers[denominator];
 }
 

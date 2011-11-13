@@ -131,10 +131,10 @@ void execute_instruction(Instruction instr){
             break;
         }
         case OUTPUT:
-            output(registers, instr.reg1);
+            output(registers, instr.reg3);
             break;
         case INPUT:
-            input(registers, instr.reg1);
+            input(registers, instr.reg3);
             break;
         case LOADPROG:{
             UM_Word ID = registers[instr.reg2];

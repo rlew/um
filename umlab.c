@@ -24,6 +24,13 @@ static inline void put_inst(Seq_T stream, int i, Um_instruction inst) {
     Seq_put(stream, i, (void *)(uintptr_t) inst);
 }
 
+static void add_label(Seq_T stream, int location_to_patch, int label_value) {
+    Um_instruction inst = get_inst(stream, location_to_patch);
+    unsigned k = Bitpack_getu(inst, 25, 0);
+    inst       = Bitpack_newu(inst, 25, 0, label_value+k);
+    put_inst(stream, location_to_patch, inst);
+}
+
 Um_instruction three_register(Um_opcode op, int ra, int rb, int rc){
     Um_instruction instr = 0;
     Um_instruction mask = instr | (Um_instruction)op;
@@ -87,6 +94,13 @@ static inline Um_instruction loadprogram(int rb, int rc){
     return three_register(LOADPROG, 0, rb, rc);
 }
 
+static void emit_out_string(Seq_T stream, const char *s, int aux_reg){
+    for(int i = 0; s[i] != '\0'; i++) {
+        emit(stream, loadval(aux_reg, s[i]));
+        emit(stream, output(aux_reg));
+    }
+}
+
 void emit_halt_test(Seq_T stream) {
     emit(stream, halt());
     emit(stream, loadval(r1, 'B'));
@@ -106,34 +120,66 @@ void emit_IO_test(Seq_T stream) {
     emit(stream, loadval(r3, 12));
     emit(stream, map(r2, r3));
     for(int i = 0; i < 12; i++) {
-        //emit(stream, input(r1));
-        //emit(stream, loadval(r3, i));
-        //emit(stream, segmentedStore(r2, r3, r1));
-        //emit(stream, segmentedLoad(r1, r2, r3));
-        //emit(stream, output(r7));
+        emit(stream, input(r1));
+        emit(stream, loadval(r3, i));
+        emit(stream, segmentedStore(r2, r3, r1));
     }
-    emit(stream, loadval(r6, 'r'));
-    emit(stream, output(r6));
+
     for(int i = 0; i < 12; i++) {
-        //emit(stream, loadval(r3, i));
-        //emit(stream, segmentedLoad(r1, r2, r3));
-        //emit(stream, output(r1));
+        emit(stream, loadval(r3, i));
+        emit(stream, segmentedLoad(r1, r2, r3));
+        emit(stream, output(r1));
     }
 }
 
-static void add_label(Seq_T stream, int location_to_patch, int label_value) {
-    Um_instruction inst = get_inst(stream, location_to_patch);
-    unsigned k = Bitpack_getu(inst, 25, 0);
-    inst       = Bitpack_newu(inst, 25, 0, label_value+k);
-    put_inst(stream, location_to_patch, inst);
+void emit_add_test(Seq_T stream) {
+    emit(stream, loadval(r0, 12));
+    emit(stream, loadval(r1, 100));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
 }
 
-static void emit_out_string(Seq_T stream, const char *s, int aux_reg){
-    for(int i = 0; s[i] != '\0'; i++) {
-        emit(stream, loadval(aux_reg, s[i]));
-        emit(stream, output(aux_reg));
-    }
+void emit_multiply_test(Seq_T stream) {
+    emit(stream, loadval(r0, 2));
+    emit(stream, loadval(r1, 50));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
 }
+
+void emit_divide_test(Seq_T stream){
+    // should flip a shit cause it's dividing by 0
+    emit(stream, loadval(r0, 2));
+    emit(stream, loadval(r1, 100));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+}
+
+void emit_move_test(Seq_T stream){
+    int L1 = Seq_length(stream);
+    emit(stream, loadval(r7, 0));
+    int L2 = Seq_length(stream);
+    emit(stream, loadval(r6, 0));
+    
+    emit(stream, conditionalMove(r7, r6, r0));
+    emit(stream, loadprogram(r0, r7));
+    add_label(stream, L2, Seq_length(stream));
+    emit_out_string(stream, "Conditional Move on zero register failed.\n",
+                    r5);
+    emit(stream, halt());
+    add_label(stream, L1, Seq_length(stream));
+    emit_out_string(stream, "Conditional Move on zero register passed.\n",
+                    r5);
+    emit(stream, halt());
+}
+
+void emit_NAND_test(Seq_T stream){
+    (void)stream;
+}
+
+void emit_mapUnmap_test(Seq_T stream){
+    (void)stream;
+}
+
 
 void emit_goto_test(Seq_T stream) {
     int patch_L = Seq_length(stream);

@@ -18,7 +18,13 @@ static struct test_info {
 } tests[] = {
   { "halt", NULL, "",               emit_halt_test },
   { "goto", NULL, "GOTO passed.\n", emit_goto_test },
-  { "IO", "hello world!", "hello world!", emit_IO_test }
+  { "IO", "hello world!", "hello world!", emit_IO_test },
+  { "add", NULL, "112", emit_add_test },
+  { "multiply", NULL, "400", emit_multiply_test },
+  { "divide", NULL, "4", emit_divide_test },
+  { "move", NULL, "Conditional Move on zero register passed.\n", emit_move_test },
+  { "nand", NULL, "", emit_NAND_test },
+  { "map", NULL, "", emit_mapUnmap_test },
 };
   
 #define NTESTS (sizeof(tests)/sizeof(tests[0]))
