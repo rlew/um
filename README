@@ -4,13 +4,19 @@ Trevor John
 COLLABORATION:
     - Josh Pearl: provided insight on the various data type representations
       for the UM as well as clarifying several key implementations points 
-    - Jesse Welch: advised several debugging procedures
+    - Jesse Welch: advised several debugging procedures as well as helped
+      improve the modularity and level of abstraction in our code.
     - Amanda Hayes: helped us find divergent results in our UM from a
       correctly implemented version in the debugging process
 
 CORRECT IMPLEMENTATION:
+    We have implemented our UM so that it successfuly runs all valid
+    instruction code that we have passed it (based on our unit tests and the
+    tests provided by professor Ramsey).
 
 INCORRECT IMPLEMENTATION:
+    As far as all our testsing and the specification is concerned, we do not
+    believe there is any incorrect implementation.
 
 DEPARTURES FROM DESIGN:
     1. Registers
@@ -26,35 +32,83 @@ DEPARTURES FROM DESIGN:
           returned after it has been mapped.
         - we have concealed the index manipulation and acquisition so that it
           all occurs within the map / unmap segment functions
-        - we have implemented a segment copy function to expedite the load
-          program um instruction
+        - most of our changes involve the abstraction of the design, separating
+          all the inner workings of the memory segments from the UM. This
+          necessitated the creation of the following functions:
+                newMem
+                loadSegment
+                getWord
+                segmentLength
 
 ARCHITECTURE:
-    Because we are creating a virtual machine, we are using the registers
-    to mimic the GPRs and the memory segments to mimic the address space.
-    The main function will instantiate the um and build all the
-    corresponding registers and memory segments, and the UM will execute
-    the program files passed to it by loading the various instructions
-    into registers.
-    While main is responsible for setting up the UM, the actual execution
-    of the program is separated in order to uphold the idea of a machine
-    operating on top of the computer's hardware.
-    Registers are the main unit of interest for program execution. 
-    Individual instructions update the registers according to the 
-    specified operation; whereas memory segments manage data storage in the
-    long term. They are updated by stores from the registers, and the data
-    in them can be retrieved to and subsequently manipulated in the 
-    registers by segmented loads.
-    Because segments deal with memory management and registers deal with
-    data manipulation, they can be examined independently with unit tests.
+    Modules:
+        registers.h
+            Represents the registers (mimicking GPRs) and all operations that
+            the registers can perform (add, load value, output, input,
+            multiplication, division, conditional move, and bitwise nand). 
+            The implementations of the register operations is hidden from the
+            UM.
+        memseg.h
+            Represents all the memory where values can be stored. All
+            manipulation of memory is contained within the abstraction, and
+            the representation of mapped and unmapped IDs is private to the
+            module. (map segment, unmap segment, segmented load, segmented
+            store, load program)
+        um.h
+            Represents the machine as a whole, including the registers and the
+            memory segments. It utilizes the memory segments in order to
+            retrieve and manipulate values through the registers without
+            knowing any underlying implementation of the memory. The UM is
+            responsible for the reading and execution of the instructions
+            through the manipulation of memory and register operations.
 
 50 MILLION INSTRUCTIONS TIME
     6:48:65 based on looping over five instructions involving loading values,
     mapping a segment, and storing a value 10 million times.
 
 UM UNIT TESTS
-
+    halt.um
+        Examines the functionality of the halt function by inserting a halt
+        instruction before other instructions and ensuring that the latter
+        ones do not execute.
+    goto.um
+        Validates the loadprogram instruction by loading a different part of
+        instruction set and executing starting at that point.
+    IO.um
+        Takes in a file IO.0, stores each character into a memory segment, and
+        then performs a segmented load to output the value at the various
+        memory segments.
+    add.um
+        Performs a series of addition instructions and prints out the
+        calculated sums to spell out "PASSED."
+    multiply.um
+        Performs a series of multiplication instructions and prints out the
+        calculated products to spell out "PASSED."
+    divide.um
+        Performs a series of division instructions and prints out the
+        calculated quotients to spell out "PASSED."
+    nand.um
+        Performs a series of bitwiseNAND instructions and prints out the
+        calculated results to spell out "PASSED."
+    map.um
+        Stressing the map and unmap functions as well as testing the reuse of
+        IDs in the UM. Maps several thousand segments and stores values into 
+        each of those segments before unmapping all of the segments and then 
+        subsequently remapping half of them. It then unmaps one segment and 
+        remaps it before unmapping the other half of the remaining mapped 
+        elements.
+    nomove.um
+        Verifies that the move function successfully changes the value in
+        registers when the conditional in rC is non 0 by outputing the
+        register values that should be updated and the same.
+    loadprog.um
+        Verifies that the loadprogram operation can move the program counter
+        within the $m[0] as well as copy new memory into $m[0] and begin
+        operating instructions at that point. We use bitshifting to place a
+        32-bit instruction word into memory and then loadprogram at the index
+        where this instruction is stored and continue execution.
+        
 TIME
-    - Analysis:
-    - Peparing:
-    - Solving:
+    - Analysis: 5 hours
+    - Peparing: 25 hours
+    - Solving: 10 hours

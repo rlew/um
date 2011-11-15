@@ -1,0 +1,11 @@
+halt.um
+goto.um
+IO.um
+add.um
+multiply.um
+divide.um
+move.um
+nand.um
+map.um
+nomove.um
+loadprog.um

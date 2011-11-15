@@ -12,7 +12,7 @@ struct Mem{
 };
 
 /*
- * Creates a new Mem structure
+ * Creates a new Mem structure and returns it
  */
 Mem* newMem(){
     Mem* mem;
@@ -21,7 +21,7 @@ Mem* newMem(){
 }
 
 /*
- *
+ * Creates a copy of the segment at the specified ID and returns the segment
  */
 static UArray_T segmentCopy(Mem* memorySegments, UM_Word ID){
     UArray_T segment = Seq_get(memorySegments->mappedIDs, ID);
@@ -46,7 +46,7 @@ void loadSegment(Mem* memorySegments, UM_Word ID){
 }
 
 /*
- *
+ * Returns the value of the word stored at the given ID and offset.
  */
 UM_Word getWord(Mem* memorySegments, UM_Word ID, UM_Word offset){
     return *(UM_Word*)UArray_at((UArray_T)Seq_get(memorySegments->mappedIDs,
@@ -54,7 +54,7 @@ UM_Word getWord(Mem* memorySegments, UM_Word ID, UM_Word offset){
 }
 
 /*
- *
+ * Returns the length of the mapepd segment stored at the ID
  */
 int segmentLength(Mem* memorySegments, UM_Word ID){
     return UArray_length((UArray_T)Seq_get(memorySegments->mappedIDs, ID));
@@ -161,6 +161,9 @@ void segmentedStore(Mem* memorySegments, UM_Word ID, int offset, UM_Word
     *word = value;
 }
 
+/*
+ * Free's all of the memory of the Mem struct
+ */ 
 void freeMem(Mem* memorySegments) {
     while(Seq_length(memorySegments->mappedIDs) != 0) {
         UArray_T seg = Seq_remlo(memorySegments->mappedIDs);

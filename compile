@@ -41,14 +41,6 @@ done
 
 case $link in
 
-  all|mem) gcc $FLAGS $LFLAGS -o mem memseg.o unitTests.o\
-                    $LIBS
-
-                   linked=yes ;;
-esac
-
-case $link in
-
   all|um) gcc $FLAGS $LFLAGS -o um memseg.o registers.o um.o main.o\
                     $LIBS
 

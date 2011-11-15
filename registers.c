@@ -40,9 +40,7 @@ void addition(UM_Word* registers, UM_Word sum, UM_Word val1, UM_Word val2) {
         RAISE(Register_Invalid);
     }
     registers[sum] = registers[val1] + registers[val2];
-    //printf("a b c: %u %u %u\n", sum, val1, val2);
-    //printf("------------------------------------SUM: %u\n", registers[sum]);
-}
+ }
 
 /*
  * Multiplies $r[val1] and $r[val2] and takes the first 32 signifcant bits
@@ -132,11 +130,3 @@ void output(UM_Word* registers, UM_Word reg) {
     putchar((char)registers[reg]);
 }
 
-/*
- * Halts all program operations and frees all corresponding memory. Called
- * with command 7.
- 
-void halt(UM_Word* registers){
-    assert(registers);
-    FREE(registers);
-}*/

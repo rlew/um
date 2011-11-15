@@ -116,7 +116,6 @@ void emit_halt_test(Seq_T stream) {
     emit(stream, output(r1));
 }
 
-/* Input and output testing */
 void emit_IO_test(Seq_T stream) {
     emit(stream, loadval(r2, 1));
     emit(stream, loadval(r3, 12));
@@ -135,22 +134,107 @@ void emit_IO_test(Seq_T stream) {
 }
 
 void emit_add_test(Seq_T stream) {
-    emit(stream, loadval(r0, 12));
-    emit(stream, loadval(r1, 100));
+    emit(stream, loadval(r0, 10));
+    emit(stream, loadval(r1, 70));
     emit(stream, addition(r2, r1, r0));
     emit(stream, output(r2));
+    emit(stream, loadval(r0, 6));
+    emit(stream, loadval(r1, 59));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));    
+    emit(stream, loadval(r0, 33));
+    emit(stream, loadval(r1, 50));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 33));
+    emit(stream, loadval(r1, 50));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 3));
+    emit(stream, loadval(r1, 66));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 65));
+    emit(stream, loadval(r1, 3));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 30));
+    emit(stream, loadval(r1, 16));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 0));
+    emit(stream, loadval(r1, 0));
+    emit(stream, addition(r2, r1, r0));
+    emit(stream, output(r2));
+
 }
 
 void emit_multiply_test(Seq_T stream) {
     emit(stream, loadval(r0, 2));
-    emit(stream, loadval(r1, 50));
+    emit(stream, loadval(r1, 40));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 5));
+    emit(stream, loadval(r1, 13));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 83));
+    emit(stream, loadval(r1, 1));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 1));
+    emit(stream, loadval(r1, 83));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 3));
+    emit(stream, loadval(r1, 23));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 17));
+    emit(stream, loadval(r1, 4));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 2));
+    emit(stream, loadval(r1, 23));
+    emit(stream, multiplication(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 0));
+    emit(stream, loadval(r1, 23));
     emit(stream, multiplication(r2, r1, r0));
     emit(stream, output(r2));
 }
 
 void emit_divide_test(Seq_T stream){
     emit(stream, loadval(r0, 2));
-    emit(stream, loadval(r1, 100));
+    emit(stream, loadval(r1, 160));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 2));
+    emit(stream, loadval(r1, 130));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 3));
+    emit(stream, loadval(r1, 249));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 4));
+    emit(stream, loadval(r1, 332));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 1));
+    emit(stream, loadval(r1, 69));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 5));
+    emit(stream, loadval(r1, 340));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 1));
+    emit(stream, loadval(r1, 46));
+    emit(stream, division(r2, r1, r0));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 10));
+    emit(stream, loadval(r1, 0));
     emit(stream, division(r2, r1, r0));
     emit(stream, output(r2));
 }
@@ -158,7 +242,7 @@ void emit_divide_test(Seq_T stream){
 void emit_nonMove_test(Seq_T stream){
     emit(stream, loadval(r0, 1));
     emit(stream, loadval(r1, 104));
-    emit(stream, loadval(r2, 2));
+    emit(stream, loadval(r2, 104));
     emit(stream, conditionalMove(r0, r1, r2));
     emit(stream, output(r0));
     emit(stream, output(r1));
@@ -185,7 +269,34 @@ void emit_move_test(Seq_T stream){
 }
 
 void emit_NAND_test(Seq_T stream){
-    (void)stream;
+    emit(stream, loadval(r0, 175));
+    emit(stream, loadval(r1, 175));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 255));
+    emit(stream, loadval(r1, 190));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 172));
+    emit(stream, loadval(r1, 255));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 188));
+    emit(stream, loadval(r1, 237));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 250));
+    emit(stream, loadval(r1, 186));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 191));
+    emit(stream, loadval(r1, 251));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
+    emit(stream, loadval(r0, 223));
+    emit(stream, loadval(r1, 209));
+    emit(stream, bitwiseNAND(r2, r0, r1));
+    emit(stream, output(r2));
 }
 
 
@@ -233,31 +344,6 @@ void emit_mapUnmap_test(Seq_T stream){
     emit_out_string(stream, "Map / unmap passed.\n", r7);
 }
 
-void emit_segmentLoadStore_test(Seq_T stream){
-    (void) stream;
-}
-
-void emit_mapLoadStore_test(Seq_T stream){
-    emit(stream, loadval(r0, 1));
-    emit(stream, loadval(r1, 10));
-    emit(stream, loadval(r2, 3));
-    emit(stream, map(r0, r1));
-    emit(stream, loadval(r3, 5228));
-    emit(stream, segmentedStore(r0, r2, r3));
-
-    emit(stream, loadval(r2, 2));
-    emit(stream, map(r2, r1));
-    emit(stream, loadval(r4, 9));
-    emit(stream, segmentedLoad(r5, r0, r2));
-    emit(stream, segmentedStore(r0, r4, r3));
-    emit(stream, segmentedStore(r0, r2, r3));
-    emit(stream, loadval(r6, 4));
-    emit(stream, segmentedStore(r2, r6, r3));
-    emit(stream, loadval(r7, 8));
-    emit(stream, segmentedStore(r2, r7, r3));
-}
-
-
 void emit_loadprog_test(Seq_T stream){
     emit(stream, loadval(r2, 7));
     emit(stream, loadprogram(r0, r2));
@@ -269,7 +355,7 @@ void emit_loadprog_test(Seq_T stream){
     emit(stream, loadval(r5, 5));
     emit(stream, loadval(r1, 1));
     emit(stream, loadval(r6, 6));
-    emit(stream, loadval(r7, 97));
+    emit(stream, loadval(r7, 104));
     emit(stream, output(r7));
 
     /* Creating a 32 bit word to load into the program */
@@ -306,13 +392,3 @@ void emit_goto_test(Seq_T stream) {
     emit_out_string(stream, "GOTO passed.\n", r1);
     emit(stream, halt());
 } 
-
-void emit_50mil_test(Seq_T stream) {
-    for(int i = 0; i < 10000000; i++) {
-        emit(stream, loadval(r0, 1));
-        emit(stream, loadval(r1, 0));
-        emit(stream, addition(r2, r0, r1));
-        emit(stream, map(r3, r0));
-        emit(stream, segmentedStore(r3, r1, r2)); 
-    }
-}
