@@ -21,10 +21,15 @@ static struct test_info {
   { "IO", "hello world!", "hello world!", emit_IO_test },
   { "add", NULL, "112", emit_add_test },
   { "multiply", NULL, "400", emit_multiply_test },
-  { "divide", NULL, "4", emit_divide_test },
-  { "move", NULL, "Conditional Move on zero register passed.\n", emit_move_test },
+  { "divide", NULL, "PASSED", emit_divide_test },
+  { "move", NULL, "Conditional Move on zero register passed.\n",
+                                emit_move_test },
   { "nand", NULL, "", emit_NAND_test },
-  { "map", NULL, "", emit_mapUnmap_test },
+  { "map", NULL, "Map / unmap passed.", emit_mapUnmap_test },
+  { "nomove", NULL, "", emit_nonMove_test },
+  { "loadprog", NULL, "", emit_loadprog_test },
+  { "store", NULL, "", emit_mapLoadStore_test },
+  { "50mil", NULL, "50 million instructions passed.\n", emit_50mil_test }
 };
   
 #define NTESTS (sizeof(tests)/sizeof(tests[0]))

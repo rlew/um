@@ -6,18 +6,15 @@
 #include "uarray.h"
 
 typedef uint32_t UM_Word;
+typedef struct Mem Mem;
 
-typedef struct Mem{
-    Seq_T mappedIDs;
-    Seq_T unmappedIDs;
-    int numMapped;
-}Mem;
-
+Mem* newMem();
+void loadSegment(Mem* memorySegments, UM_Word ID);
+UM_Word getWord(Mem* memorySegments, UM_Word ID, UM_Word offset);
+int segmentLength(Mem* memorySegments, UM_Word ID);
 void instantiateMem(Mem* memorySegments, int length);
-void mapSegment(Mem* memorySegments, UM_Word ID, int length);
+UM_Word mapSegment(Mem* memorySegments, int length);
 void unmapSegment(Mem* memorySegments, UM_Word index);
-UArray_T getIndex(Mem* memorySegments, UM_Word ID);
-UArray_T segmentCopy(Mem* memorySegments, UM_Word ID);
 UM_Word segmentedLoad(Mem* memorySegments, UM_Word ID, int offset);
 void segmentedStore(Mem* memorySegments, UM_Word ID, int offset, UM_Word
                        value);

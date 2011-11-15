@@ -16,7 +16,7 @@ CIILIBS=`pkg-config --libs cii40`
 
 # compile and link against course software and netpbm library
 CFLAGS="-I. -I/comp/40/include $CIIFLAGS"
-LIBS="-lbitpack $CIILIBS -lum-dis -lcii"
+LIBS="-lbitpack -lum-dis $CIILIBS"
 LFLAGS="-L/comp/40/lib64"
 
 # these flags max out warnings and debug info
@@ -74,8 +74,9 @@ esac
 
 # error if asked to link something we didn't recognize
 if [ $linked = no ]; then
-  case $link in  # if the -link option makes no sense, complain 
+  case $link in  # if the -link option makes no sense, complain
     none) ;; # OK, do nothing
     *) echo "`basename $0`: don't know how to link $link" 1>&2 ; exit 1 ;;
   esac
 fi
+

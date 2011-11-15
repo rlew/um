@@ -40,6 +40,8 @@ void addition(UM_Word* registers, UM_Word sum, UM_Word val1, UM_Word val2) {
         RAISE(Register_Invalid);
     }
     registers[sum] = registers[val1] + registers[val2];
+    //printf("a b c: %u %u %u\n", sum, val1, val2);
+    //printf("------------------------------------SUM: %u\n", registers[sum]);
 }
 
 /*

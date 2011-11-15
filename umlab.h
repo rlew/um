@@ -24,6 +24,12 @@ extern void emit_divide_test(Seq_T stream);
 extern void emit_move_test(Seq_T stream);
 extern void emit_NAND_test(Seq_T stream);
 extern void emit_mapUnmap_test(Seq_T stream);
+extern void emit_non0Move_test(Seq_T stream);
+extern void emit_segmentLoadStore_test(Seq_T stream);
+extern void emit_loadprog_test(Seq_T stream);
+extern void emit_nonMove_test(Seq_T stream);
+extern void emit_mapLoadStore_test(Seq_T stream);
+extern void emit_50mil_test(Seq_T stream);
 
 enum Um_opcode {
     MOVE = 0,

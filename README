@@ -1,3 +1,60 @@
-Universal Machine
-by: Trevor John
-    Rachel Lew
+Rachel Lew
+Trevor John
+
+COLLABORATION:
+    - Josh Pearl: provided insight on the various data type representations
+      for the UM as well as clarifying several key implementations points 
+    - Jesse Welch: advised several debugging procedures
+    - Amanda Hayes: helped us find divergent results in our UM from a
+      correctly implemented version in the debugging process
+
+CORRECT IMPLEMENTATION:
+
+INCORRECT IMPLEMENTATION:
+
+DEPARTURES FROM DESIGN:
+    1. Registers
+        - we removed the halt() instruction from the registers interface and
+          made it a um operation
+    2. Memory Segments
+        - rather than using a stack to implement the unmapped memory segments,
+          we utilize a sequence. Our memory segments are 2 sequences, mapped
+          and unmapped, and an integer keeping track of the number of mapped
+          segments
+        - map segment no longer takes in an ID to map but instead uses the
+          unmapped ID sequence to select the next ID to map. This ID is
+          returned after it has been mapped.
+        - we have concealed the index manipulation and acquisition so that it
+          all occurs within the map / unmap segment functions
+        - we have implemented a segment copy function to expedite the load
+          program um instruction
+
+ARCHITECTURE:
+    Because we are creating a virtual machine, we are using the registers
+    to mimic the GPRs and the memory segments to mimic the address space.
+    The main function will instantiate the um and build all the
+    corresponding registers and memory segments, and the UM will execute
+    the program files passed to it by loading the various instructions
+    into registers.
+    While main is responsible for setting up the UM, the actual execution
+    of the program is separated in order to uphold the idea of a machine
+    operating on top of the computer's hardware.
+    Registers are the main unit of interest for program execution. 
+    Individual instructions update the registers according to the 
+    specified operation; whereas memory segments manage data storage in the
+    long term. They are updated by stores from the registers, and the data
+    in them can be retrieved to and subsequently manipulated in the 
+    registers by segmented loads.
+    Because segments deal with memory management and registers deal with
+    data manipulation, they can be examined independently with unit tests.
+
+50 MILLION INSTRUCTIONS TIME
+    6:48:65 based on looping over five instructions involving loading values,
+    mapping a segment, and storing a value 10 million times.
+
+UM UNIT TESTS
+
+TIME
+    - Analysis:
+    - Peparing:
+    - Solving:

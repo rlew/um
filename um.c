@@ -7,7 +7,7 @@
 static UM_Word registers[numRegisters];
 static Mem* memorySegments;
 static int programCounter;
-static int INITIAL_SET_SIZE = 500; // Number of memory segment IDs
+static int INITIAL_SET_SIZE = 5000; // Number of memory segment IDs
 static int PROGRAM_HINT = 500;     // Number of program instructions
 
 /*
@@ -21,7 +21,6 @@ static Instruction parseInstruction(UM_Word instructionCode){
         instr.value = Bitpack_getu(instructionCode, 25, 0);
     }
     else{
-        //instr.value = Bitpack_getu(instructionCode, 19, 9);
         instr.reg1 = Bitpack_getu(instructionCode, 3, 6);
         instr.reg2 = Bitpack_getu(instructionCode, 3, 3);
         instr.reg3 = Bitpack_getu(instructionCode, 3, 0);
@@ -34,20 +33,19 @@ static Instruction parseInstruction(UM_Word instructionCode){
  * with the registers.
  */
 void build_and_execute_um(FILE* program){
-    NEW(memorySegments);
+    memorySegments = newMem();
     instantiateMem(memorySegments, INITIAL_SET_SIZE);
     initializeRegisters(registers, numRegisters);
 
     mapProgram(program);
     programCounter = 0;
-    
-    while(programCounter < 
-          UArray_length((UArray_T)Seq_get(memorySegments->mappedIDs, 0)))
-    {
-        UM_Word instruction = *(UM_Word*)UArray_at(
-            (UArray_T)Seq_get(memorySegments->mappedIDs, 0), programCounter);
+    int numInstr = 0;
+
+    while(programCounter < segmentLength(memorySegments, 0)){
+        UM_Word instruction = getWord(memorySegments, 0, programCounter);
         Instruction instr = parseInstruction(instruction);
         execute_instruction(instr);
+        numInstr++;
         if(instr.op == HALT) break;
     }
 
@@ -57,8 +55,9 @@ void build_and_execute_um(FILE* program){
 /*
  * Initializes the program counter and returns the number of instructions.
  */
-int mapProgram(FILE* program) {
+void mapProgram(FILE* program) {
     Seq_T words = Seq_new(PROGRAM_HINT);
+
     int c = getc(program);
     while(c != EOF) {
         UM_Word temp = Bitpack_newu(temp, 8, 24, c);
@@ -74,16 +73,16 @@ int mapProgram(FILE* program) {
         c = getc(program);
     }
 
-    mapSegment(memorySegments, 0, Seq_length(words));
+    mapSegment(memorySegments, Seq_length(words));
 
-    for(UM_Word locToLoad = 0; locToLoad < (UM_Word)Seq_length(words); locToLoad++){
+    for(UM_Word locToLoad = 0; locToLoad < (UM_Word)Seq_length(words);
+                    locToLoad++){
         UM_Word* value = (UM_Word*)Seq_get(words, locToLoad);
         segmentedStore(memorySegments, 0, locToLoad, *value);
         FREE(value);
     }
 
     Seq_free(&words);
-    return UArray_length((UArray_T)Seq_get(memorySegments->mappedIDs, 0));
 }
 
 /*
@@ -138,8 +137,7 @@ void execute_instruction(Instruction instr){
         }
         case MAP:{
             UM_Word length = registers[instr.reg3];
-            UM_Word ID = registers[instr.reg2];
-            mapSegment(memorySegments, ID, length);
+            registers[instr.reg2] = mapSegment(memorySegments, length);
             programCounter++;
             break;
         }
@@ -161,11 +159,9 @@ void execute_instruction(Instruction instr){
         }
         case LOADPROG:{
             UM_Word ID = registers[instr.reg2];
-            UArray_T copy = segmentCopy(memorySegments, ID);
-            unmapSegment(memorySegments, 0);
-            mapSegment(memorySegments, 0, UArray_length(copy));
-            UArray_T toFree = Seq_put(memorySegments->mappedIDs, 0, copy);
-            UArray_free(&toFree);
+            if(ID != 0)
+                loadSegment(memorySegments, ID);
+
             programCounter = registers[instr.reg3];
             break;
         }
